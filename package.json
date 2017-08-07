@@ -1,0 +1,45 @@
+{
+  "name": "draft-js-annotations",
+  "version": "0.1.0",
+  "description": "A component library for handling annotations in Draft.js",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "babel src/",
+    "prepublish": "yarn run build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cltk/annotations.git"
+  },
+  "keywords": [
+    "draft-js",
+    "annotations"
+  ],
+  "author": "CLTK",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cltk/annotations/issues"
+  },
+  "homepage": "https://github.com/cltk/annotations#readme",
+  "dependencies": {
+    "draft-js": "^0.10.1",
+    "prop-types": "^15.5.10",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
+  },
+  "devDependencies": {
+    "@storybook/react": "^3.2.3",
+    "babel-cli": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "eslint": "^4.4.0",
+    "flow-bin": "^0.52.0",
+    "flow-typed": "^2.1.5"
+  }
+}
