@@ -10,9 +10,9 @@ import {
   convertFromRaw,
 } from 'draft-js'
 import PropTypes from 'prop-types'
+import 'draft-js/dist/Draft.css'
 
 import Annotation from './Annotation'
-import AnnotationButton from './AnnotationButton'
 import {
   ANNOTATION_ENTITY_TYPE,
   HIGHLIGHT_BLUE,
@@ -144,7 +144,6 @@ export default class Annotatable extends React.Component {
         role="presentation"
         {...this.props.style.container}
       >
-        <AnnotationButton onClick={this.handleAnnotationButtonClick} />
         <Editor
           customStyleMap={styleMap}
           editorState={this.state.editorState}
