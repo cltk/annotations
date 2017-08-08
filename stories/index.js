@@ -54,7 +54,6 @@ const blocks = `[1447α] [8]
   }))
 
 storiesOf('Annotatable', module)
-  .add('empty', () => <Annotatable />)
   .add('example', () => (
     <Annotatable
       blocks={blocks}
