@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { storiesOf } from '@storybook/react'
+
 import Basic from './Basic'
 import Highlight from './Highlight'
 import rawBasic from '!!raw-loader!./Basic'
