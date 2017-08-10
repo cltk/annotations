@@ -1,5 +1,11 @@
 // @flow
 
+import flatten from 'lodash.flatten'
+import zip from 'lodash.zip'
+
+const SHORT = '˘'
+const LONG = '¯'
+
 const vowels = [
   'ε', 
   'ι', 
@@ -131,7 +137,8 @@ export const syllablize = (word: string): Array<string> => {
 
       return syllables.concat(substr)
     }
-
+    
+    // add trailing consonants to final syllable
     if (index === word.length - 1 && lastIndex <= word.length - 1) {
       syllables[syllables.length - 1] = `${syllables[syllables.length - 1]}${word.substring(lastIndex)}`
 
@@ -142,17 +149,61 @@ export const syllablize = (word: string): Array<string> => {
   }, [])
 }
 
-export const scan = (syllablizedText: Array<string>) => {
+export const isLongByNature = (syllable: string): boolean => {
+  for (let i = 0, l = syllable.length; i < l; i++) {
+    if (longVowels.includes(syllable[i])) {
+      return true
+    }
 
+    if (diphthongs.includes(`${syllable[i]}${syllable[i + 1]}`)) {
+      return true
+    }
+  }
+
+  return false
 }
 
-export const processText = (text: string): Array<string> => {
+export const isLongByPosition = (syllable: string, nextSyllable: string): boolean => {
+  if (!nextSyllable) {
+    return false
+  }
+
+  if (vowels.includes(syllable.substr(-1)) &&
+      doubleConsonants.includes(nextSyllable[0])) {
+    return true
+  }
+
+  if (singleConsonants.includes(syllable.substr(-1)) &&
+      singleConsonants.includes(nextSyllable[0])) {
+    return true
+  }
+
+  if (singleConsonants.includes(nextSyllable[0]) && 
+      singleConsonants.includes(nextSyllable[1]) &&
+      !stopConsonants.includes(nextSyllable[0]) &&
+      !liquids.includes(nextSyllable[1])) {
+    return true
+  }
+  return false
+}
+
+export const isLong = (syllable: string, nextSyllable: string): boolean => (
+  isLongByNature(syllable) || 
+  isLongByPosition(syllable, nextSyllable)
+)
+
+export const scan = (sentence: Array<string>): Array<string> => sentence.map((syllable, index) => {
+  return isLong(syllable, sentence[index + 1]) ? LONG : SHORT
+})
+
+export const processText = (text: string): Array<Array<string>> => {
   const unaccentedText = cleanText(text)
   const sentences = unaccentedText.split('.')
   const wordsInSentences = sentences.map(s => s.split(' '))
-  const syllablesByWord = wordsInSentences.map(s => s.map(w => syllablize(w)))
+  const syllablizedSentences = wordsInSentences.map(s => flatten(s.map(w => syllablize(w))))
+  const scannedSentences = syllablizedSentences.map(s => scan(s))
   
-  console.log(syllablesByWord)
+  return zip(syllablizedSentences, scannedSentences)
 }
 
 export default processText

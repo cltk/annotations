@@ -27,6 +27,8 @@
   "homepage": "https://github.com/cltk/annotations#readme",
   "dependencies": {
     "draft-js": "^0.10.1",
+    "lodash.flatten": "^4.4.0",
+    "lodash.zip": "^4.2.0",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-dom": "^15.6.1"
