@@ -9,7 +9,6 @@ import {
   EditorState,
   convertFromRaw,
 } from 'draft-js'
-import PropTypes from 'prop-types'
 import 'draft-js/dist/Draft.css'
 
 import Annotation from './Annotation'
@@ -53,43 +52,52 @@ export const styleMap = {
   }
 }
 
+type Props = {
+  blocks: Array<{
+    depth: number,
+    entityRanges: ?Array<{
+      key: string,
+      length: number,
+      offset: number,
+    }>,
+    key: string,
+    text: ?string,
+    type: string,
+  }>,
+  decorators: ?Array<{
+    component: React.Component<Object, Object, Object>,
+    strategy: Function,
+  }>,
+  entityMap: ?{
+    [key: string]: {
+      mutability: 'IMMUTABLE' | 'MUTABLE' | 'SEGMENTED',
+      type: string,
+      data: ?{ [key: string]: any }
+    }
+  },
+  style: {
+    container: ?Object,
+    editor: ?Object
+  }
+}
+
 export default class Annotatable extends React.Component {
   handleChange: Function
   handleMouseDown: Function
   handleMouseUp: Function
   state: Object
+  props: Props
 
   static defaultProps = {
     blocks: [],
+    decorators: [],
     entityMap: {},
     style: {},
   }
 
-  static propTypes = {
-    blocks: PropTypes.arrayOf(PropTypes.shape({
-      depth: PropTypes.number.isRequired,
-      key: PropTypes.string.isRequired,
-      text: PropTypes.string,
-      type: PropTypes.string.isRequired,
-    })),
-    entityMap: PropTypes.objectOf(PropTypes.object),
-    style: PropTypes.shape({
-      container: PropTypes.shape({
-        // TODO: limit definable container styles
-      }),
-      editor: PropTypes.shape({
-        // TODO: limit definable editor styles
-      })
-    })
-  }
-
-  constructor(props: {
-    blocks: Array<Object>,
-    entityMap: Object,
-    style: Object,
-  }) {
+  constructor(props: Props) {
     super(props)
-    
+
     this.handleChange = this.handleChange.bind(this)
     this.handleMouseDown = this.handleMouseDown.bind(this)
     this.handleMouseUp = this.handleMouseUp.bind(this)
@@ -112,7 +120,7 @@ export default class Annotatable extends React.Component {
           blocks: this.props.blocks,
           entityMap: this.props.entityMap,
         }),
-        decorator
+        new CompositeDecorator(this.props.decorators)
       )
     })
   }
