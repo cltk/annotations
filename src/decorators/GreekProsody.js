@@ -1,5 +1,6 @@
 // @flow
 
+import React from 'react'
 import flatten from 'lodash.flatten'
 import zip from 'lodash.zip'
 
@@ -100,7 +101,7 @@ export const cleanText = (text: string): string => {
   const keys = Object.keys(accents)
   const l = keys.length
 
-  return text.replace(punctuation, '')
+  return text.toLowerCase().replace(punctuation, '')
     .replace(stops, '.')
     .split('')
     .map(c => {
@@ -111,7 +112,7 @@ export const cleanText = (text: string): string => {
       }
       
       return c
-    }).join('').toLowerCase()
+    }).join('')
 }
 
 export const syllablize = (word: string): Array<string> => {
@@ -132,7 +133,7 @@ export const syllablize = (word: string): Array<string> => {
 
     if (vowels.includes(currentLetter) || longVowels.includes(currentLetter)) {
       const substr = word.substring(lastIndex, index + 1)
-
+      
       lastIndex = index + 1
 
       return syllables.concat(substr)
@@ -196,14 +197,36 @@ export const scan = (sentence: Array<string>): Array<string> => sentence.map((sy
   return isLong(syllable, sentence[index + 1]) ? LONG : SHORT
 })
 
-export const processText = (text: string): Array<Array<string>> => {
+export const processText = (text: string): { 
+  scansion: Array<string>, 
+  syllables: Array<string> 
+} => {
   const unaccentedText = cleanText(text)
   const sentences = unaccentedText.split('.')
   const wordsInSentences = sentences.map(s => s.split(' '))
   const syllablizedSentences = wordsInSentences.map(s => flatten(s.map(w => syllablize(w))))
   const scannedSentences = syllablizedSentences.map(s => scan(s))
   
-  return zip(syllablizedSentences, scannedSentences)
+  return {
+    scansion: scannedSentences,
+    syllables: syllablizedSentences,
+  }
 }
 
-export default processText
+type Props = {
+  block: ContentBlock,
+  scansion: Array<string>,
+  syllables: Array<string>
+}
+
+const GreekProsody = (props: Props) => {
+  const {
+    block,
+    scansion,
+    syllables,
+  } = props
+
+  const text = block.getText()
+}
+
+export default GreekProsody

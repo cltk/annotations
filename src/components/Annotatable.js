@@ -89,7 +89,8 @@ export default class Annotatable extends React.Component {
     style: Object,
   }) {
     super(props)
-
+    
+    this.handleChange = this.handleChange.bind(this)
     this.handleMouseDown = this.handleMouseDown.bind(this)
     this.handleMouseUp = this.handleMouseUp.bind(this)
 
