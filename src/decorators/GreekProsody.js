@@ -230,6 +230,66 @@ export const processText = (text: string): Array<{
   })
 }
 
+type Block = {
+  entityRanges: Array<{
+    key: string | number,
+    offset: number,
+    length: number
+  }>,
+  key: string,
+  text: string,
+}
+
+type Entity = {
+  data: { [key: string]: any },
+  mutability: 'IMMUTABLE',
+  type: 'SCANSION',
+}
+
+export const addScansionToBlocks = (inputBlocks: Array<Block>): {
+  blocks: Array<Block>,
+  entityMap: Array<Entity>
+} => {
+  return inputBlocks.reduce(({ blocks, entityMap }, block) => {
+    const processed = processText(block.text)
+    const entityRanges = []
+
+    for (let i = 0, l = processed.length; i < l; i++) {
+      entityRanges.push({
+        key: entityMap.length,
+        offset: processed[i].offset,
+        length: processed[i].length
+      })
+      entityMap.push({
+        type: 'SCANSION',
+        mutability: 'IMMUTABLE',
+        data: {
+          diacritic: processed[i].diacritic,
+        }
+      })
+    }
+
+    return {
+      blocks: [...blocks, { ...block, entityRanges }],
+      entityMap
+    }
+  }, { blocks: [], entityMap: [] })
+}
+
+export const scansionStrategy = (contentBlock, callback, contentState) => {
+  contentBlock.findEntityRanges(
+    character => {
+      const entityKey = character.getEntity()
+
+      return (
+        entityKey !== null &&
+        contentState.getEntity(entityKey).getType() === 'SCANSION'
+      )
+    },
+    callback,
+  )
+}
+
 type Props = {
   children: Object,
   contentState: ContentState,
