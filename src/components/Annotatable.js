@@ -3,54 +3,11 @@
 import React from 'react'
 import {
   CompositeDecorator,
-  ContentBlock,
-  ContentState,
   Editor,
   EditorState,
   convertFromRaw,
 } from 'draft-js'
 import 'draft-js/dist/Draft.css'
-
-import Annotation from './Annotation'
-import {
-  ANNOTATION_ENTITY_TYPE,
-  HIGHLIGHT_BLUE,
-  PENDING_ANNOTATION_BLUE,
-} from '../constants'
-
-const findNoteEntities = (
-  contentBlock: ContentBlock,
-  callback: Function,
-  contentState: ContentState
-) => {
-  contentBlock.findEntityRanges(
-    character => {
-      const entityKey = character.getEntity()
-
-      return (
-        entityKey !== null &&
-        contentState.getEntity(entityKey).getType() === ANNOTATION_ENTITY_TYPE
-      )
-    },
-    callback,
-  )
-}
-
-export const decorator = new CompositeDecorator([
-  {
-    strategy: findNoteEntities,
-    component: Annotation,
-  },
-])
-
-export const styleMap = {
-  PENDING_ANNOTATION: {
-    backgroundColor: PENDING_ANNOTATION_BLUE,
-  },
-  HIGHLIGHT: {
-    backgroundColor: HIGHLIGHT_BLUE,
-  }
-}
 
 type Props = {
   blocks: Array<{
@@ -154,7 +111,6 @@ export default class Annotatable extends React.Component {
         {...this.props.style.container}
       >
         <Editor
-          customStyleMap={styleMap}
           editorState={this.state.editorState}
           onChange={this.handleChange}
           readOnly={this.state.readOnly}

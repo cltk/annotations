@@ -15,7 +15,8 @@ const vowels = [
   'ω',
   'υ',
   'ῖ',
-  'ᾶ'
+  'ᾶ',
+  'ῦ'
 ]
 
 const singleConsonants = [
@@ -131,16 +132,16 @@ export const syllablize = (sentence: string): Array<[
 
     if (diphthongs.includes(`${currentLetter}${sentence[index + 1]}`)) {
       const substr = sentence.substring(lastIndex, index + 2)
-      const nextEl = [substr, lastIndex, index === 0 ? index + 2 : index]
+      const nextEl = [substr, lastIndex, index === 0 ? 2 : index + 2]
 
       lastIndex = index + 2
 
       return [...syllables, nextEl]
     }
 
-    if (vowels.includes(currentLetter) || longVowels.includes(currentLetter)) {
+    if (vowels.includes(currentLetter)) {
       const substr = sentence.substring(lastIndex, index + 1)
-      const nextEl = [substr, lastIndex, index === 0 ? index + 1 : index]
+      const nextEl = [substr, lastIndex, index === 0 ? 1 : index + 1]
 
       lastIndex = index + 1
 
@@ -237,6 +238,9 @@ type Props = {
 
 const style = {
   diacritic: {
+    left: -0.1,
+    marginLeft: 'auto',
+    marginRight: 'auto',
     position: 'absolute',
     textAlign: 'center',
     top: -4,
@@ -244,7 +248,6 @@ const style = {
   },
   text: {
     display: 'inline-block',
-    letterSpacing: 0.5,
     paddingBottom: 4,
     paddingTop: 2,
     position: 'relative',
