@@ -9,81 +9,99 @@ import {
 } from 'draft-js'
 import 'draft-js/dist/Draft.css'
 
-type Props = {
-  blocks: Array<{
-    depth: number,
-    entityRanges: ?Array<{
-      key: string,
-      length: number,
-      offset: number,
-    }>,
+import type {
+  CompositeDecorator as CompositeDecoratorType,
+  EditorState as EditorStateType,
+  SyntheticFocusEvent
+} from 'draft-js'
+
+export type Block = {
+  depth: number,
+  entityRanges: ?Array<{
     key: string,
-    text: ?string,
+    length: number,
+    offset: number,
+  }>,
+  key: string,
+  text: ?string,
+  type: string,
+}
+
+export type EntityMap = {
+  [key: string]: {
+    mutability: 'IMMUTABLE' | 'MUTABLE' | 'SEGMENTED',
     type: string,
-  }>,
-  decorators: ?Array<{
-    component: React.Component<Object, Object, Object>,
-    strategy: Function,
-  }>,
-  entityMap: ?{
-    [key: string]: {
-      mutability: 'IMMUTABLE' | 'MUTABLE' | 'SEGMENTED',
-      type: string,
-      data: ?{ [key: string]: any }
-    }
-  },
-  style: {
-    container: ?Object,
-    editor: ?Object
+    data: ?{ [key: string]: any }
   }
 }
 
+export type Props = {
+  blocks: ?Array<Block>,
+  decorators: ?Array<CompositeDecoratorType>,
+  editorState: EditorStateType,
+  entityMap: ?EntityMap,
+  onBlur: SyntheticFocusEvent => void,
+  onChange: EditorStateType => void,
+  onFocus: SyntheticFocusEvent => void,
+  style: {
+    container: ?{ [key: string]: any },
+    editor: ?{ [key: string]: any },
+  }
+}
+
+export const createEditorState = (
+  blocks: Array<Block>,
+  entityMap: ?EntityMap,
+  decorators: ?Array<CompositeDecoratorType>
+) => {
+  return EditorState.createWithContent(
+    convertFromRaw({ blocks, entityMap: entityMap || {} }),
+    new CompositeDecorator(decorators || [])
+  )
+}
+
 export default class Annotatable extends React.Component {
+  handleBlur: Function
   handleChange: Function
+  handleFocus: Function
   handleMouseDown: Function
   handleMouseUp: Function
   state: Object
   props: Props
 
   static defaultProps = {
-    blocks: [],
     decorators: [],
-    entityMap: {},
+    editorState: EditorState.createEmpty(),
+    onBlur: () => {},
+    onChange: () => {},
+    onFocus: () => {},
     style: {},
   }
 
   constructor(props: Props) {
     super(props)
 
+    this.handleBlur = this.handleBlur.bind(this)
     this.handleChange = this.handleChange.bind(this)
+    this.handleFocus = this.handleFocus.bind(this)
     this.handleMouseDown = this.handleMouseDown.bind(this)
     this.handleMouseUp = this.handleMouseUp.bind(this)
 
     this.state = {
-      annotationEditorShown: true,
-      editorState: EditorState.createEmpty(),
       readOnly: true,
     }
   }
 
-  componentWillMount() {
-    if (!this.props.blocks.length) {
-      return
-    }
-
-    this.setState({
-      editorState: EditorState.createWithContent(
-        convertFromRaw({
-          blocks: this.props.blocks,
-          entityMap: this.props.entityMap,
-        }),
-        new CompositeDecorator(this.props.decorators)
-      )
-    })
+  handleBlur(e: SyntheticFocusEvent) {
+    this.props.onBlur(e)
   }
 
   handleChange(editorState: EditorState) {
-    this.setState({ editorState })
+    this.props.onChange(editorState)
+  }
+
+  handleFocus(e: SyntheticFocusEvent) {
+    this.props.onFocus(e)
   }
 
   // These mouse event handlers allow selections,
@@ -96,26 +114,22 @@ export default class Annotatable extends React.Component {
     this.setState({ readOnly: true })
   }
 
-  handleAnnotationButtonClick() {
-    this.setState({
-      annotationEditorShown: true,
-    })
-  }
-
   render() {
     return (
       <div
         onMouseDown={this.handleMouseDown}
         onMouseUp={this.handleMouseUp}
         role="presentation"
-        {...this.props.style.container}
+        style={this.props.style.container}
       >
         <Editor
-          editorState={this.state.editorState}
+          editorState={this.props.editorState}
+          onBlur={this.handleBlur}
           onChange={this.handleChange}
+          onFocus={this.handleFocus}
           readOnly={this.state.readOnly}
           spellCheck
-          {...this.props.style.editor}
+          style={this.props.style.editor}
         />
       </div>
     )

@@ -1,8 +1,8 @@
 import React from 'react'
 
-import Annotatable from '../../src'
+import Annotatable, { createEditorState } from '../../src'
 import { argonautica } from '../stubs'
 
-const Basic = () => <Annotatable blocks={argonautica} />
+const Basic = () => <Annotatable editorState={createEditorState(argonautica)} />
 
 export default Basic

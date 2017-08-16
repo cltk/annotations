@@ -2,9 +2,11 @@ import React from 'react'
 
 import { storiesOf } from '@storybook/react'
 
+import Annotating from './Annotating'
 import Basic from './Basic'
 import Scansion from './Scansion'
 import Highlight from './Highlight'
+import rawAnnotating from '!!raw-loader!./Annotating'
 import rawBasic from '!!raw-loader!./Basic'
 import rawScansion from '!!raw-loader!./Scansion'
 
@@ -41,5 +43,12 @@ storiesOf('Annotatable', module)
         {rawScansion}
       </Highlight>
       <Scansion />
+    </div>
+  )).add('Annotating', () => (
+    <div>
+      <Highlight>
+        {rawAnnotating}
+      </Highlight>
+      <Annotating />
     </div>
   ))

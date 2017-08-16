@@ -1,11 +1,81 @@
 // @flow
 
 import React from 'react'
-import PropTypes from 'prop-types'
 import {
   Editor,
   EditorState,
+  Modifier,
+  convertToRaw,
 } from 'draft-js'
+
+import type {
+  ContentBlock,
+  ContentState,
+  EditorState as EditorStateType
+} from 'draft-js'
+
+export type Props = {
+  editorState: EditorStateType,
+  onCancel: Event => void,
+  onChange: EditorState => void,
+  onSave: (Event, EditorStateType) => void,
+  readOnly: boolean,
+  reset: void => void,
+  style: { [key: string]: any },
+}
+
+export const NOTE_ENTITY_TYPE = '--annotatable-NOTE'
+
+export const addNoteEntityToAnnotatable = (
+  annotatableEditorState: EditorStateType,
+  noteEditorState: EditorStateType,
+): EditorStateType => {
+  const contentState = annotatableEditorState.getCurrentContent()
+  const selectionState = annotatableEditorState.getSelection()
+  const body = convertToRaw(noteEditorState.getCurrentContent())
+  const contentStateWithEntity = contentState.createEntity(
+    NOTE_ENTITY_TYPE,
+    'MUTABLE',
+    body,
+  )
+  const entityKey = contentStateWithEntity.getLastCreatedEntityKey()
+  const contentStateWithNote = Modifier.applyEntity(
+    contentStateWithEntity,
+    selectionState,
+    entityKey
+  )
+
+  return EditorState.set(
+    annotatableEditorState, {
+      currentContent: contentStateWithNote
+    }
+  )
+}
+
+const findNoteEntities = (
+  contentBlock: ContentBlock,
+  callback: Function,
+  contentState: ContentState
+) => {
+  contentBlock.findEntityRanges(
+    character => {
+      const entityKey = character.getEntity()
+
+      return (
+        entityKey !== null &&
+        contentState.getEntity(entityKey).getType() === NOTE_ENTITY_TYPE
+      )
+    },
+    callback,
+  )
+}
+
+export const noteDecorator = {
+  strategy: findNoteEntities,
+  component: props => <span style={{
+    backgroundColor: '#b1d7ff',
+  }}>{props.children}</span>
+}
 
 export default class AnnotationEditor extends React.Component {
   editor: Editor
@@ -13,42 +83,28 @@ export default class AnnotationEditor extends React.Component {
   handleCancel: Function
   handleChange: Function
   handleSave: Function
-  state: { editorState: EditorState }
+  state: { editorState: EditorStateType }
 
   static defaultProps = {
     editorState: EditorState.createEmpty(),
     onChange: () => {},
     readOnly: false,
     reset: () => {},
+    style: {
+      border: '1px solid #d3d3d3',
+      borderRadius: 2,
+      maxWidth: 480,
+      padding: '0.5em',
+    }
   }
 
-  static propTypes = {
-    editorState: PropTypes.shape({}),
-    onCancel: PropTypes.func.isRequired,
-    onChange: PropTypes.func,
-    onSave: PropTypes.func.isRequired,
-    readOnly: PropTypes.bool,
-    reset: PropTypes.func,
-  }
-
-  constructor(props: {
-    editorState: EditorState,
-    onCancel: Event => void,
-    onChange: EditorState => void,
-    onSave: (Event, EditorState) => void,
-    readOnly: boolean,
-    reset: void => void,
-  }) {
+  constructor(props: Props) {
     super(props)
 
     this.focus = () => this.editor.focus()
     this.handleChange = this.handleChange.bind(this)
     this.handleCancel = this.handleCancel.bind(this)
     this.handleSave = this.handleSave.bind(this)
-
-    this.state = {
-      editorState: props.editorState,
-    }
   }
 
   handleChange(editorState: EditorState) {
@@ -67,9 +123,9 @@ export default class AnnotationEditor extends React.Component {
 
   render() {
     return (
-      <div onClick={this.focus} role="present">
+      <div onClick={this.focus} role="present" style={this.props.style}>
         <Editor
-          editorState={this.state.editorState}
+          editorState={this.props.editorState}
           onChange={this.handleChange}
           readOnly={this.props.readOnly}
           ref={c => { this.editor = c }}
