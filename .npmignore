@@ -1,0 +1,8 @@
+node_modules
+.storybook
+src
+.flowconfig
+__mocks__
+**/*.test.*
+
+!lib

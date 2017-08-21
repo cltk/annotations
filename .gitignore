@@ -62,4 +62,6 @@ flow-typed
 
 *.swp
 
+lib
+
 # End of https://www.gitignore.io/api/node

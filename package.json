@@ -2,14 +2,14 @@
   "name": "draft-js-annotations",
   "version": "0.1.0",
   "description": "A component library for handling annotations in Draft.js",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "build": "babel src/",
+    "build": "babel src/ --out-dir lib",
     "build-storybook": "build-storybook",
     "deploy-storybook": "storybook-to-ghpages",
-    "prepublish": "yarn run build",
+    "prepare": "yarn run build",
     "storybook": "start-storybook -p 6006",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest src/**/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -38,15 +38,86 @@
     "@storybook/storybook-deployer": "^2.0.0",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
+    "babel-jest": "^20.0.3",
     "babel-preset-env": "^1.6.0",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "eslint": "^4.4.0",
+    "eslint-plugin-jest": "^20.0.3",
     "eslint-plugin-react": "^7.2.0",
     "flow-bin": "^0.52.0",
     "flow-typed": "^2.1.5",
     "highlight.js": "^9.12.0",
-    "raw-loader": "^0.5.1"
+    "jest": "^20.0.4",
+    "raw-loader": "^0.5.1",
+    "react-test-renderer": "^15.6.1"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es6": true,
+      "jest/globals": true,
+      "node": true
+    },
+    "extends": "eslint:recommended",
+    "parser": "babel-eslint",
+    "plugins": [
+      "jest",
+      "react"
+    ],
+    "rules": {
+      "consistent-return": [
+        2
+      ],
+      "eqeqeq": [
+        "error",
+        "smart"
+      ],
+      "jest/no-disabled-tests": "warn",
+      "jest/no-focused-tests": "error",
+      "jest/no-identical-title": "error",
+      "jest/valid-expect": "error",
+      "key-spacing": [
+        0
+      ],
+      "new-cap": [
+        0
+      ],
+      "no-multi-spaces": [
+        0
+      ],
+      "no-shadow": [
+        1
+      ],
+      "no-unused-vars": [
+        2
+      ],
+      "no-use-before-define": [
+        2,
+        "nofunc"
+      ],
+      "quotes": [
+        0
+      ],
+      "react/jsx-uses-react": [
+        2
+      ],
+      "react/jsx-uses-vars": [
+        2
+      ],
+      "react/react-in-jsx-scope": [
+        2
+      ],
+      "semi": [
+        "error",
+        "never"
+      ]
+    }
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
+    }
   }
 }
