@@ -2,10 +2,10 @@ import React from 'react'
 
 import Annotatable, { createEditorState } from '../../src'
 import { argonautica } from '../stubs'
-import GreekProsody, {
+import {
   addScansionToBlocks,
-  scansionStrategy,
-} from '../../src/decorators/GreekProsody'
+  greekProsodyDecorator,
+} from '../../src'
 
 export default class Scansion extends React.Component {
   constructor(props) {
@@ -18,9 +18,8 @@ export default class Scansion extends React.Component {
 
   render() {
     const { blocks, entityMap } = this.state
-    const decorator = { strategy: scansionStrategy, component: GreekProsody }
     return <Annotatable
-      editorState={createEditorState(blocks, entityMap, [decorator])}
+      editorState={createEditorState(blocks, entityMap, [greekProsodyDecorator])}
     />
   }
 }

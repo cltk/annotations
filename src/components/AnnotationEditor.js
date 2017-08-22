@@ -9,8 +9,6 @@ import {
 } from 'draft-js'
 
 import type {
-  ContentBlock,
-  ContentState,
   EditorState as EditorStateType
 } from 'draft-js'
 
@@ -50,31 +48,6 @@ export const addNoteEntityToAnnotatable = (
       currentContent: contentStateWithNote
     }
   )
-}
-
-const findNoteEntities = (
-  contentBlock: ContentBlock,
-  callback: Function,
-  contentState: ContentState
-) => {
-  contentBlock.findEntityRanges(
-    character => {
-      const entityKey = character.getEntity()
-
-      return (
-        entityKey !== null &&
-        contentState.getEntity(entityKey).getType() === NOTE_ENTITY_TYPE
-      )
-    },
-    callback,
-  )
-}
-
-export const noteDecorator = {
-  strategy: findNoteEntities,
-  component: props => <span style={{
-    backgroundColor: '#b1d7ff',
-  }}>{props.children}</span>
 }
 
 export default class AnnotationEditor extends React.Component {

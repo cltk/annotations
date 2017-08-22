@@ -1,9 +1,5 @@
 // @flow
 
-import {
-  CompositeDecorator
-} from 'draft-js'
-
 import type { ContentBlock, ContentState } from 'draft-js'
 
 import {
@@ -31,12 +27,10 @@ export const findNoteEntities = (
   )
 }
 
-export const decorator = new CompositeDecorator([
-  {
-    strategy: findNoteEntities,
-    component: Annotation,
-  },
-])
+export const annotationDecorator = {
+  strategy: findNoteEntities,
+  component: Annotation,
+}
 
 export const styleMap = {
   PENDING_ANNOTATION: {

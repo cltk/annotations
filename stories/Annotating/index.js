@@ -4,8 +4,8 @@ import { EditorState } from 'draft-js'
 import Annotatable, {
   AnnotationEditor,
   addNoteEntityToAnnotatable,
+  annotationDecorator,
   createEditorState,
-  noteDecorator
 } from '../../src'
 import { argonautica } from '../stubs'
 
@@ -22,7 +22,7 @@ export default class Annotating extends React.Component {
     this.state = {
       annotationEditorReadOnly: true,
       noteEditorState: EditorState.createEmpty(),
-      annotatableEditorState: createEditorState(argonautica, {}, [noteDecorator])
+      annotatableEditorState: createEditorState(argonautica, {}, [annotationDecorator])
     }
   }
 

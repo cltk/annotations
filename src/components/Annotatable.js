@@ -56,7 +56,7 @@ export const createEditorState = (
 ) => {
   return EditorState.createWithContent(
     convertFromRaw({ blocks, entityMap: entityMap || {} }),
-    new CompositeDecorator(decorators || [])
+    new CompositeDecorator((decorators || []).length ? [].concat(decorators) : [])
   )
 }
 

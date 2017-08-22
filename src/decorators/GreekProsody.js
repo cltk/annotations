@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import type { ContentState } from 'draft-js'
+import type { ContentBlock, ContentState } from 'draft-js'
 
 const SHORT = '˘'
 const LONG = '¯'
@@ -276,7 +276,11 @@ export const addScansionToBlocks = (inputBlocks: Array<Block>): {
   }, { blocks: [], entityMap: [] })
 }
 
-export const scansionStrategy = (contentBlock, callback, contentState) => {
+export const scansionStrategy = (
+  contentBlock: ContentBlock,
+  callback: Function,
+  contentState: ContentState
+) => {
   contentBlock.findEntityRanges(
     character => {
       const entityKey = character.getEntity()
@@ -323,6 +327,11 @@ const GreekProsody = (props: Props) => {
       <span style={style.diacritic}>{diacritic}</span>
     </div>
   )
+}
+
+export const greekProsodyDecorator = {
+  strategy: scansionStrategy,
+  component: GreekProsody
 }
 
 export default GreekProsody
