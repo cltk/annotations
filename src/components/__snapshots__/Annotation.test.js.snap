@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Annotation Component renders correctly 1`] = `
+<span
+  onClick={[Function]}
+  onMouseOut={[Function]}
+  onMouseOver={[Function]}
+  role="presentation"
+  style={
+    Object {
+      "backgroundColor": "#71bed6",
+      "cursor": "pointer",
+    }
+  }
+>
+  text
+</span>
+`;

@@ -1,43 +1,48 @@
 // @flow
 
 import React from 'react'
-import PropTypes from 'prop-types'
+
+export type Props = {
+  annotationHoverEntityKey: string,
+  children: string | Object,
+  entityKey: string,
+  onClick: string => void,
+  onMouseOut: string => void,
+  onMouseOver: string => void,
+  revealedEntityKey: string,
+  setCurrentTextState: Function,
+}
 
 export default class Annotation extends React.Component {
   handleClick: Function
   handleMouseOut: Function
   handleMouseOver: Function
-
-  static propTypes = {
-    annotationHoverEntityKey: PropTypes.string,
-    children: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
-    revealedEntityKey: PropTypes.string,
-    setCurrentTextState: PropTypes.func.isRequired,
-  }
+  isHoverTarget: void => boolean
 
   static defaultProps = {
     annotationHoverEntityKey: '',
     revealedEntityKey: '',
   }
 
-  constructor(props: Object) {
+  constructor(props: Props) {
     super(props)
 
     this.handleClick = this.handleClick.bind(this)
     this.handleMouseOut = this.handleMouseOut.bind(this)
     this.handleMouseOver = this.handleMouseOver.bind(this)
+    this.isHoverTarget = this.isHoverTarget.bind(this)
   }
 
   handleClick() {
-    this.props.revealAnnotationEntity(this.props.entityKey)
+    this.props.onClick(this.props.entityKey)
   }
 
   handleMouseOut() {
-    this.props.setAnnotationHoverEntityKey('')
+    this.props.onMouseOut(this.props.entityKey)
   }
 
   handleMouseOver() {
-    this.props.setAnnotationHoverEntityKey(this.props.entityKey)
+    this.props.onMouseOver(this.props.entityKey)
   }
 
   isHoverTarget() {
