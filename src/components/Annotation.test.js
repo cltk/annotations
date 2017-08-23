@@ -42,17 +42,4 @@ describe('Annotation Component', () => {
 
     expect(onMouseOver).toHaveBeenCalled()
   })
-
-  describe('#isHoverTarget', () => {
-    it('returns `true` if `entityKey` prop and `annotationHoverEntityKey` prop match', () => {
-      const annotation = shallow(
-        <Annotation
-          annotationHoverEntityKey="key"
-          entityKey="key"
-        >text</Annotation>
-      )
-
-      expect(annotation.isHoverTarget()).toBe(true)
-    })
-  })
 })
