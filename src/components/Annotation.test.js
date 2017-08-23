@@ -4,7 +4,7 @@ import { shallow } from 'enzyme'
 
 import Annotation from './Annotation'
 
-describe('Annotation Component', () => {
+describe('Annotation component', () => {
   it('renders correctly', () => {
     const tree = renderer.create(
       <Annotation onClick={() => {}}>text</Annotation>

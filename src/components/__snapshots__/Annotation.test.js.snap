@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Annotation Component renders correctly 1`] = `
+exports[`Annotation component renders correctly 1`] = `
 <span
   onClick={[Function]}
   onMouseOut={[Function]}

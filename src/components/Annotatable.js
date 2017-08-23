@@ -22,8 +22,14 @@ export type Block = {
     length: number,
     offset: number,
   }>,
+  inlineStyleRanges: ?Array<{
+    key: string,
+    length: number,
+    offset: number,
+    type: string,
+  }>,
   key: string,
-  text: ?string,
+  text: string,
   type: string,
 }
 

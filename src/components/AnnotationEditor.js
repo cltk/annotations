@@ -19,7 +19,7 @@ export type Props = {
   onSave: (Event, EditorStateType) => void,
   readOnly: boolean,
   reset: void => void,
-  style: { [key: string]: any },
+  style: ?{ [key: string]: any },
 }
 
 export const NOTE_ENTITY_TYPE = '--annotatable-NOTE'

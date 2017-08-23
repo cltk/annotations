@@ -1,17 +1,16 @@
 import React from 'react'
-import renderer from 'react-test-renderer'
-import { ContentState, EditorState } from 'draft-js'
+import { ContentState, Editor, EditorState, genKey } from 'draft-js'
 import { shallow } from 'enzyme'
 
-import Annotatable from './Annotatable'
+import Annotatable, { createEditorState } from './Annotatable'
 
-test('Annotatable', () => {
-  it('renders correctly', () => {
-    const tree = renderer.create(
+describe('Annotatable', () => {
+  it('renders', () => {
+    const annotatable = shallow(
       <Annotatable editorState={EditorState.createEmpty()} />
-    ).toJSON()
+    )
 
-    expect(tree).toMatchSnapshot()
+    expect(annotatable).toBeDefined()
   })
 
   it('sets `state.readOnly` to `false` on mousedown', () => {
@@ -19,13 +18,13 @@ test('Annotatable', () => {
       <Annotatable editorState={EditorState.createEmpty()} />
     )
 
-    expect(annotatable.state.readOnly).toBe(true)
+    expect(annotatable.state().readOnly).toBe(true)
 
-    const div = annotatable.find('div')[0]
+    const div = annotatable.find('div')
 
     div.simulate('mousedown')
 
-    expect(annotatable.state.readOnly).toBe(false)
+    expect(annotatable.state().readOnly).toBe(false)
   })
 
   it('resets `state.readOnly` to `true` on mouseup', () => {
@@ -33,17 +32,17 @@ test('Annotatable', () => {
       <Annotatable editorState={EditorState.createEmpty()} />
     )
 
-    expect(annotatable.state.readOnly).toBe(true)
+    expect(annotatable.state().readOnly).toBe(true)
 
-    const div = annotatable.find('div')[0]
-
-    div.simulate('mousedown')
-
-    expect(annotatable.state.readOnly).toBe(false)
+    const div = annotatable.find('div')
 
     div.simulate('mousedown')
 
-    expect(annotatable.state.readOnly).toBe(true)
+    expect(annotatable.state().readOnly).toBe(false)
+
+    div.simulate('mouseup')
+
+    expect(annotatable.state().readOnly).toBe(true)
   })
 
   it('accepts a starting `editorState`', () => {
@@ -52,9 +51,9 @@ test('Annotatable', () => {
     const annotatable = shallow(
       <Annotatable editorState={EditorState.createWithContent(content)} />
     )
-    const editorState = annotatable.state.editorState.toRaw()
+    const editorState = annotatable.childAt(0).props().editorState
 
-    expect(editorState.blocks[0]).toEqual(text)
+    expect(editorState.getCurrentContent().hasText(text)).toBe(true)
   })
 
   it('accepts an `onBlur` prop and calls it on blur', () => {
@@ -62,7 +61,7 @@ test('Annotatable', () => {
     const annotatable = shallow(
       <Annotatable editorState={EditorState.createEmpty()} onBlur={onBlur} />
     )
-    const editor = annotatable.find('div')[0].firstChild
+    const editor = annotatable.find(Editor)
 
     editor.simulate('blur')
 
@@ -74,7 +73,7 @@ test('Annotatable', () => {
     const annotatable = shallow(
       <Annotatable editorState={EditorState.createEmpty()} onChange={onChange} />
     )
-    const editor = annotatable.find('div')[0].firstChild
+    const editor = annotatable.find(Editor)
 
     editor.simulate('change')
 
@@ -86,10 +85,50 @@ test('Annotatable', () => {
     const annotatable = shallow(
       <Annotatable editorState={EditorState.createEmpty()} onFocus={onFocus} />
     )
-    const editor = annotatable.find('div')[0].firstChild
+    const editor = annotatable.find(Editor)
 
     editor.simulate('focus')
 
     expect(onFocus).toHaveBeenCalled()
+  })
+
+  describe('createEditorState()', () => {
+    it('returns an instance of EditorState', () => {
+      const blocks = [{
+        depth: 1,
+        key: genKey(),
+        text: 'text',
+        type: 'unstyled'
+      }]
+      const editorState = createEditorState(blocks)
+
+      expect(editorState).toBeInstanceOf(EditorState)
+    })
+
+    it('accepts an `entityMap`', () => {
+      const blocks = [{
+        depth: 1,
+        entityRanges: [{
+          key: '0',
+          length: 5,
+          offset: 1,
+        }],
+        key: genKey(),
+        text: 'lorem ipsum',
+        type: 'unstyled',
+      }]
+      const entityMap = {
+        '0': {
+          mutability: 'IMMUTABLE',
+          type: 'BOLD',
+          data: {}
+        }
+      }
+      const editorState = createEditorState(blocks, entityMap)
+      const contentState = editorState.getCurrentContent()
+      const entity = contentState.getEntity('1').toJSON()
+
+      expect(entity).toMatchObject(entityMap[0])
+    })
   })
 })
