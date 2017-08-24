@@ -1,4 +1,7 @@
-excluded_paths:
+engines:
+  eslint:
+    enabled: true
+exclude_paths:
 - "src/stubs.js"
 - "**.test.js"
 ratings:
