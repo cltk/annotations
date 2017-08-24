@@ -2,11 +2,8 @@ Annotations (built with [Draft.js](https://draftjs.org))
 ---
 
 [![Build Status](https://travis-ci.org/cltk/annotations.svg?branch=master)](https://travis-ci.org/cltk/annotations)
-
 [![Code Climate](https://codeclimate.com/github/cltk/annotations/badges/gpa.svg)](https://codeclimate.com/github/cltk/annotations)
-
 [![Test Coverage](https://codeclimate.com/github/cltk/annotations/badges/coverage.svg)](https://codeclimate.com/github/cltk/annotations/coverage)
-
 [![Issue Count](https://codeclimate.com/github/cltk/annotations/badges/issue_count.svg)](https://codeclimate.com/github/cltk/annotations)
 
 A library for adding notes to text
