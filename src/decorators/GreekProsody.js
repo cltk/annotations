@@ -3,6 +3,8 @@
 import React from 'react'
 import type { ContentBlock, ContentState } from 'draft-js'
 
+import { SCANSION_ENTITY_TYPE } from '../constants'
+
 const SHORT = '˘'
 const LONG = '¯'
 
@@ -97,6 +99,11 @@ const accents = {
   'ὖὗ': 'ῦ',
 }
 
+const diaresis = [
+  'ϊ',
+  'ϋ'
+]
+
 export const cleanText = (text: string): string => {
   const keys = Object.keys(accents)
   const l = keys.length
@@ -128,6 +135,15 @@ export const syllablize = (sentence: string): Array<[
 
     if (stops.test(currentLetter) || punctuation.test(currentLetter)) {
       return syllables
+    }
+
+    if (diaresis.includes(currentLetter)) {
+      const substr = sentence.substring(lastIndex, index + 1)
+      const nextEl = [substr, lastIndex, index === 0 ? 1 : index + 1]
+
+      lastIndex = index + 1
+
+      return [...syllables, nextEl]
     }
 
     if (diphthongs.includes(`${currentLetter}${sentence[index + 1]}`)) {
@@ -243,7 +259,7 @@ type Block = {
 type Entity = {
   data: { [key: string]: any },
   mutability: 'IMMUTABLE',
-  type: 'SCANSION',
+  type: SCANSION_ENTITY_TYPE,
 }
 
 export const addScansionToBlocks = (inputBlocks: Array<Block>): {
@@ -261,7 +277,7 @@ export const addScansionToBlocks = (inputBlocks: Array<Block>): {
         length: processed[i].length
       })
       entityMap.push({
-        type: 'SCANSION',
+        type: SCANSION_ENTITY_TYPE,
         mutability: 'IMMUTABLE',
         data: {
           diacritic: processed[i].diacritic,

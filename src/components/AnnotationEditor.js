@@ -12,6 +12,8 @@ import type {
   EditorState as EditorStateType
 } from 'draft-js'
 
+import { ANNOTATION_ENTITY_TYPE } from '../constants'
+
 export type Props = {
   editorState: EditorStateType,
   onCancel: Event => void,
@@ -22,8 +24,6 @@ export type Props = {
   style: ?{ [key: string]: any },
 }
 
-export const NOTE_ENTITY_TYPE = '--annotatable-NOTE'
-
 export const addNoteEntityToAnnotatable = (
   annotatableEditorState: EditorStateType,
   noteEditorState: EditorStateType,
@@ -32,7 +32,7 @@ export const addNoteEntityToAnnotatable = (
   const selectionState = annotatableEditorState.getSelection()
   const body = convertToRaw(noteEditorState.getCurrentContent())
   const contentStateWithEntity = contentState.createEntity(
-    NOTE_ENTITY_TYPE,
+    ANNOTATION_ENTITY_TYPE,
     'MUTABLE',
     body,
   )

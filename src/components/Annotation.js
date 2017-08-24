@@ -2,6 +2,11 @@
 
 import React from 'react'
 
+import {
+  ANNOTATION_BLUE,
+  ANNOTATION_HOVER_BLUE
+} from '../constants'
+
 export type Props = {
   annotationHoverEntityKey: string,
   children: string | Object,
@@ -52,7 +57,9 @@ export default class Annotation extends React.Component {
   render() {
     const style = {
       cursor: 'pointer',
-      backgroundColor: this.isHoverTarget() ? '#acd9e7' : '#71bed6',
+      backgroundColor: this.isHoverTarget() ?
+        ANNOTATION_HOVER_BLUE :
+        ANNOTATION_BLUE,
     }
 
     return (
