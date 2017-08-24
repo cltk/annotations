@@ -9,7 +9,9 @@
     "deploy-storybook": "storybook-to-ghpages",
     "prepare": "yarn run build",
     "storybook": "start-storybook -p 6006",
-    "test": "jest src/**/*.test.js"
+    "test": "jest src/**/*.test.js",
+    "test:coverage": "yarn test -- --coverage",
+    "test:watch": "yarn test -- --watch"
   },
   "repository": {
     "type": "git",

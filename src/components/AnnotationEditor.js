@@ -53,10 +53,7 @@ export const addNoteEntityToAnnotatable = (
 export default class AnnotationEditor extends React.Component {
   editor: Editor
   focus: Function
-  handleCancel: Function
   handleChange: Function
-  handleSave: Function
-  state: { editorState: EditorStateType }
 
   static defaultProps = {
     editorState: EditorState.createEmpty(),
@@ -76,22 +73,10 @@ export default class AnnotationEditor extends React.Component {
 
     this.focus = () => this.editor.focus()
     this.handleChange = this.handleChange.bind(this)
-    this.handleCancel = this.handleCancel.bind(this)
-    this.handleSave = this.handleSave.bind(this)
   }
 
   handleChange(editorState: EditorState) {
     this.props.onChange(editorState)
-
-    this.setState({ editorState })
-  }
-
-  handleCancel(e: Event) {
-    this.props.onCancel(e)
-  }
-
-  handleSave(e: Event) {
-    this.props.onSave(e, this.state.editorState)
   }
 
   render() {
