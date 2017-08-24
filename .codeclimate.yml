@@ -1,6 +1,7 @@
 engines:
   eslint:
     enabled: true
+    channel: "eslint-4"
 excluded_paths:
   - "src/stubs.js"
   - "**.test.js"
