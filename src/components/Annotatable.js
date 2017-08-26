@@ -9,6 +9,11 @@ import {
 } from 'draft-js'
 import 'draft-js/dist/Draft.css'
 
+import {
+  PENDING_ANNOTATION_BLUE,
+  PENDING_ANNOTATION_STYLE
+} from '../constants'
+
 import type {
   CompositeDecorator as CompositeDecoratorType,
   EditorState as EditorStateType,
@@ -43,6 +48,7 @@ export type EntityMap = {
 
 export type Props = {
   blocks: ?Array<Block>,
+  customStyleMap: ?Object,
   decorators: ?Array<CompositeDecoratorType>,
   editorState: EditorStateType,
   entityMap: ?EntityMap,
@@ -64,6 +70,12 @@ export const createEditorState = (
     convertFromRaw({ blocks, entityMap: entityMap || {} }),
     new CompositeDecorator((decorators || []).length ? [].concat(decorators) : [])
   )
+}
+
+export const customStyleMap = {
+  [PENDING_ANNOTATION_STYLE]: {
+    backgroundColor: PENDING_ANNOTATION_BLUE,
+  }
 }
 
 export default class Annotatable extends React.Component {
@@ -129,6 +141,7 @@ export default class Annotatable extends React.Component {
         style={this.props.style.container}
       >
         <Editor
+          customStyleMap={customStyleMap}
           editorState={this.props.editorState}
           onBlur={this.handleBlur}
           onChange={this.handleChange}

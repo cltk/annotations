@@ -1,5 +1,5 @@
 import React from 'react'
-import { EditorState } from 'draft-js'
+import { EditorState, RichUtils } from 'draft-js'
 
 import Annotatable, {
   AnnotationEditor,
@@ -7,6 +7,7 @@ import Annotatable, {
   annotationDecorator,
   createEditorState,
 } from '../../src'
+import { PENDING_ANNOTATION_STYLE } from '../../src/constants'
 import { argonautica } from '../stubs'
 
 export default class Annotating extends React.Component {
@@ -17,26 +18,42 @@ export default class Annotating extends React.Component {
     this.handleAnnotatableChange = this.handleAnnotatableChange.bind(this)
     this.handleAnnotationEditorChange =
       this.handleAnnotationEditorChange.bind(this)
+    this.handleAnnotationEditorFocus =
+      this.handleAnnotationEditorFocus.bind(this)
     this.saveAnnotation = this.saveAnnotation.bind(this)
 
     this.state = {
       annotationEditorReadOnly: true,
       noteEditorState: EditorState.createEmpty(),
-      annotatableEditorState: createEditorState(argonautica, {}, [annotationDecorator])
+      annotatableEditorState: createEditorState(
+        argonautica,
+        {},
+        [annotationDecorator]
+      )
     }
   }
 
   cancelEditing(e) {
     e.preventDefault()
 
-    this.setState({ annotationEditorReadOnly: true })
+    this.setState({
+      annotatableEditorState: RichUtils.toggleInlineStyle(
+        this.state.annotatableEditorState,
+        PENDING_ANNOTATION_STYLE
+      ),
+      annotationEditorReadOnly: true,
+      noteEditorState: EditorState.createEmpty(),
+    })
   }
 
   handleAnnotatableChange(annotatableEditorState) {
     const selectionState = annotatableEditorState.getSelection()
 
     this.setState({
-      annotatableEditorState,
+      annotatableEditorState: RichUtils.toggleInlineStyle(
+        annotatableEditorState,
+        PENDING_ANNOTATION_STYLE
+      ),
       annotationEditorReadOnly: !this.state.annotationEditorReadOnly ||
         selectionState.isCollapsed()
     })
@@ -62,6 +79,20 @@ export default class Annotating extends React.Component {
     })
   }
 
+  handleAnnotationEditorFocus() {
+    const { annotatableEditorState } = this.state
+    const selectionState = annotatableEditorState.getSelection()
+
+    if (!selectionState.isCollapsed()) {
+      this.setState({
+        annotatableEditorState: EditorState.forceSelection(
+          annotatableEditorState,
+          selectionState
+        )
+      })
+    }
+  }
+
   render() {
     const {
       annotatableEditorState,
@@ -74,6 +105,7 @@ export default class Annotating extends React.Component {
         <AnnotationEditor
           editorState={noteEditorState}
           onChange={this.handleAnnotationEditorChange}
+          onFocus={this.handleAnnotationEditorFocus}
           readOnly={annotationEditorReadOnly}
         />
         <div style={{ marginBottom: 10 }}>

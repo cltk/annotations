@@ -5,19 +5,25 @@ import {
   Editor,
   EditorState,
   Modifier,
+  RichUtils,
   convertToRaw,
 } from 'draft-js'
 
 import type {
-  EditorState as EditorStateType
+  EditorState as EditorStateType,
+  SyntheticMouseEvent
 } from 'draft-js'
 
-import { ANNOTATION_ENTITY_TYPE } from '../constants'
+import {
+  ANNOTATION_ENTITY_TYPE,
+  PENDING_ANNOTATION_STYLE,
+} from '../constants'
 
 export type Props = {
   editorState: EditorStateType,
   onCancel: Event => void,
   onChange: EditorState => void,
+  onFocus: SyntheticMouseEvent => void,
   onSave: (Event, EditorStateType) => void,
   readOnly: boolean,
   reset: void => void,
@@ -28,6 +34,10 @@ export const addNoteEntityToAnnotatable = (
   annotatableEditorState: EditorStateType,
   noteEditorState: EditorStateType,
 ): EditorStateType => {
+  const newAnnotatableEditorState = RichUtils.toggleInlineStyle(
+    annotatableEditorState,
+    PENDING_ANNOTATION_STYLE
+  )
   const contentState = annotatableEditorState.getCurrentContent()
   const selectionState = annotatableEditorState.getSelection()
   const body = convertToRaw(noteEditorState.getCurrentContent())
@@ -44,7 +54,7 @@ export const addNoteEntityToAnnotatable = (
   )
 
   return EditorState.set(
-    annotatableEditorState, {
+    newAnnotatableEditorState, {
       currentContent: contentStateWithNote
     }
   )
@@ -58,6 +68,7 @@ export default class AnnotationEditor extends React.Component {
   static defaultProps = {
     editorState: EditorState.createEmpty(),
     onChange: () => {},
+    onFocus: () => {},
     readOnly: false,
     reset: () => {},
     style: {
@@ -71,20 +82,36 @@ export default class AnnotationEditor extends React.Component {
   constructor(props: Props) {
     super(props)
 
-    this.focus = () => this.editor.focus()
     this.handleChange = this.handleChange.bind(this)
+    this.handleDivClick = this.handleDivClick.bind(this)
+    this.handleFocus = this.handleFocus.bind(this)
   }
 
   handleChange(editorState: EditorState) {
     this.props.onChange(editorState)
   }
 
+  handleDivClick(e: SyntheticMouseEvent) {
+    e.preventDefault()
+
+    this.editor && this.editor.focus()
+  }
+
+  handleFocus(e: SyntheticMouseEvent) {
+    this.props.onFocus(e, this.editor)
+  }
+
   render() {
     return (
-      <div onClick={this.focus} role="present" style={this.props.style}>
+      <div
+        onClick={this.handleDivClick}
+        role="present"
+        style={this.props.style}
+      >
         <Editor
           editorState={this.props.editorState}
           onChange={this.handleChange}
+          onFocus={this.handleFocus}
           readOnly={this.props.readOnly}
           ref={c => { this.editor = c }}
           spellCheck

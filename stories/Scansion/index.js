@@ -18,8 +18,12 @@ export default class Scansion extends React.Component {
 
   render() {
     const { blocks, entityMap } = this.state
-    return <Annotatable
-      editorState={createEditorState(blocks, entityMap, [greekProsodyDecorator])}
-    />
+    return (
+      <Annotatable
+        editorState={
+          createEditorState(blocks, entityMap, [greekProsodyDecorator])
+        }
+      />
+    )
   }
 }

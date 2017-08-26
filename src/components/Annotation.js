@@ -26,6 +26,9 @@ export default class Annotation extends React.Component {
 
   static defaultProps = {
     annotationHoverEntityKey: '',
+    onClick: () => {},
+    onMouseOut: () => {},
+    onMouseOver: () => {},
     revealedEntityKey: '',
   }
 
