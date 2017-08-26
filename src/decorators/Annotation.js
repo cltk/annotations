@@ -25,9 +25,13 @@ export const findNoteEntities = (
   )
 }
 
-export const annotationDecorator = {
+export const annotationDecorator = (
+  hoverEntityKey: string,
+  onHover: (entityKey: string) => void,
+  onClick: (entityKey: string) => void,
+) => ({
   strategy: findNoteEntities,
-  component: Annotation,
-}
+  component: Annotation(hoverEntityKey, onHover, onClick),
+})
 
 

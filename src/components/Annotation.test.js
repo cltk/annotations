@@ -5,9 +5,12 @@ import { shallow } from 'enzyme'
 import Annotation from './Annotation'
 
 describe('Annotation component', () => {
+  const noop = () => {}
+
   it('renders correctly', () => {
+    const C = Annotation('', noop, noop)
     const tree = renderer.create(
-      <Annotation onClick={() => {}}>text</Annotation>
+      <C>text</C>
     ).toJSON()
 
     expect(tree).toMatchSnapshot()
@@ -15,31 +18,34 @@ describe('Annotation component', () => {
 
   it('calls `onClick` prop on click', () => {
     const onClick = jest.fn()
+    const C = Annotation('', noop, onClick)
     const annotation = shallow(
-      <Annotation onClick={onClick}>text</Annotation>
+      <C>text</C>
     )
     annotation.find('span').simulate('click')
 
     expect(onClick).toHaveBeenCalled()
   })
 
-  it('calls `onMouseOut` prop on mouseout', () => {
-    const onMouseOut = jest.fn()
+  it('calls `onHover` prop on mouseout', () => {
+    const onHover = jest.fn()
+    const C = Annotation('', onHover, noop)
     const annotation = shallow(
-      <Annotation onMouseOut={onMouseOut}>text</Annotation>
+      <C>text</C>
     )
     annotation.find('span').simulate('mouseout')
 
-    expect(onMouseOut).toHaveBeenCalled()
+    expect(onHover).toHaveBeenCalled()
   })
 
-  it('calls `onMouseOver` prop on mouseover', () => {
-    const onMouseOver = jest.fn()
+  it('calls `onHover` prop on mouseover', () => {
+    const onHover = jest.fn()
+    const C = Annotation('', onHover, noop)
     const annotation = shallow(
-      <Annotation onMouseOver={onMouseOver}>text</Annotation>
+      <C>text</C>
     )
     annotation.find('span').simulate('mouseover')
 
-    expect(onMouseOver).toHaveBeenCalled()
+    expect(onHover).toHaveBeenCalled()
   })
 })

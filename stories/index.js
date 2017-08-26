@@ -66,6 +66,10 @@ storiesOf('Annotatable', module)
         Clicking on the passage then displays your note for viewing or further
         editing.
       </p>
+      <p>
+        Note that this example is not intended to be complete, but merely to
+        show — as clearly as we can — some ways of using these components.
+      </p>
       <Highlight>
         {rawAnnotating}
       </Highlight>

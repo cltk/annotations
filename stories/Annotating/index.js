@@ -1,5 +1,10 @@
 import React from 'react'
-import { EditorState, RichUtils } from 'draft-js'
+import {
+  CompositeDecorator,
+  EditorState,
+  RichUtils,
+  convertFromRaw,
+} from 'draft-js'
 
 import Annotatable, {
   AnnotationEditor,
@@ -16,19 +21,27 @@ export default class Annotating extends React.Component {
 
     this.cancelEditing = this.cancelEditing.bind(this)
     this.handleAnnotatableChange = this.handleAnnotatableChange.bind(this)
-    this.handleAnnotationEditorChange =
-      this.handleAnnotationEditorChange.bind(this)
-    this.handleAnnotationEditorFocus =
-      this.handleAnnotationEditorFocus.bind(this)
+    this.handleAnnotationClick = this.handleAnnotationClick.bind(this)
+    this.handleAnnotationHover = this.handleAnnotationHover.bind(this)
+    this.handleNoteEditorBlur = this.handleNoteEditorBlur.bind(this)
+    this.handleNoteEditorChange =
+      this.handleNoteEditorChange.bind(this)
+    this.handleNoteEditorFocus =
+      this.handleNoteEditorFocus.bind(this)
     this.saveAnnotation = this.saveAnnotation.bind(this)
 
     this.state = {
-      annotationEditorReadOnly: true,
+      hoverEntityKey: '',
+      noteEditorReadOnly: true,
       noteEditorState: EditorState.createEmpty(),
       annotatableEditorState: createEditorState(
         argonautica,
         {},
-        [annotationDecorator]
+        [annotationDecorator(
+          '',
+          this.handleAnnotationHover,
+          this.handleAnnotationClick
+        )]
       )
     }
   }
@@ -41,7 +54,7 @@ export default class Annotating extends React.Component {
         this.state.annotatableEditorState,
         PENDING_ANNOTATION_STYLE
       ),
-      annotationEditorReadOnly: true,
+      noteEditorReadOnly: true,
       noteEditorState: EditorState.createEmpty(),
     })
   }
@@ -54,13 +67,65 @@ export default class Annotating extends React.Component {
         annotatableEditorState,
         PENDING_ANNOTATION_STYLE
       ),
-      annotationEditorReadOnly: !this.state.annotationEditorReadOnly ||
+      noteEditorReadOnly: !this.state.noteEditorReadOnly ||
         selectionState.isCollapsed()
     })
   }
 
-  handleAnnotationEditorChange(noteEditorState) {
+  handleAnnotationHover(entityKey) {
+    this.setState({
+      annotatableEditorState: EditorState.set(
+        this.state.annotatableEditorState, {
+          decorator: new CompositeDecorator([
+            annotationDecorator(
+              entityKey,
+              this.handleAnnotationHover,
+              this.handleAnnotationClick
+            )
+          ])
+        }
+      ),
+    })
+  }
+
+  handleAnnotationClick(entityKey) {
+    const { annotatableEditorState } = this.state
+    const contentState = annotatableEditorState.getCurrentContent()
+    const entity = contentState.getEntity(entityKey)
+    const data = entity.getData()
+
+    this.setState({
+      noteEditorReadOnly: false,
+      noteEditorState: EditorState.createWithContent(convertFromRaw(data))
+    })
+  }
+
+  handleNoteEditorBlur() {
+    const { noteEditorState } = this.state
+
+    if (!noteEditorState.getCurrentContent().hasText()) {
+      this.setState({
+        noteEditorReadOnly: true,
+      })
+    }
+  }
+
+  handleNoteEditorChange(noteEditorState) {
     this.setState({ noteEditorState })
+  }
+
+  handleNoteEditorFocus() {
+    const { annotatableEditorState } = this.state
+    const selectionState = annotatableEditorState.getSelection()
+
+    if (!selectionState.isCollapsed()) {
+      this.setState({
+        annotatableEditorState: EditorState.forceSelection(
+          annotatableEditorState,
+          selectionState
+        )
+      })
+    }
   }
 
   saveAnnotation(e) {
@@ -75,48 +140,37 @@ export default class Annotating extends React.Component {
       annotatableEditorState: addNoteEntityToAnnotatable(
         annotatableEditorState,
         noteEditorState
-      )
+      ),
+      noteEditorReadOnly: true,
+      noteEditorState: EditorState.createEmpty(),
     })
-  }
-
-  handleAnnotationEditorFocus() {
-    const { annotatableEditorState } = this.state
-    const selectionState = annotatableEditorState.getSelection()
-
-    if (!selectionState.isCollapsed()) {
-      this.setState({
-        annotatableEditorState: EditorState.forceSelection(
-          annotatableEditorState,
-          selectionState
-        )
-      })
-    }
   }
 
   render() {
     const {
       annotatableEditorState,
       noteEditorState,
-      annotationEditorReadOnly
+      noteEditorReadOnly
     } = this.state
 
     return (
       <div>
         <AnnotationEditor
           editorState={noteEditorState}
-          onChange={this.handleAnnotationEditorChange}
-          onFocus={this.handleAnnotationEditorFocus}
-          readOnly={annotationEditorReadOnly}
+          onBlur={this.handleNoteEditorBlur}
+          onChange={this.handleNoteEditorChange}
+          onFocus={this.handleNoteEditorFocus}
+          readOnly={noteEditorReadOnly}
         />
         <div style={{ marginBottom: 10 }}>
           <button
-            disabled={annotationEditorReadOnly}
+            disabled={noteEditorReadOnly}
             onClick={this.cancelEditing}
           >
             Cancel
           </button>
           <button
-            disabled={annotationEditorReadOnly}
+            disabled={noteEditorReadOnly}
             onClick={this.saveAnnotation}
           >
             Add note
