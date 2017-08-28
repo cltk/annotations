@@ -2,15 +2,21 @@ import React from 'react'
 import renderer from 'react-test-renderer'
 import { shallow } from 'enzyme'
 
-import Annotation from './Annotation'
+import { AnnotationComponent as Annotation } from './Annotation'
 
 describe('Annotation component', () => {
   const noop = () => {}
 
   it('renders correctly', () => {
-    const C = Annotation('', noop, noop)
     const tree = renderer.create(
-      <C>text</C>
+      <Annotation
+        entityKey="key"
+        hoverEntityKey=""
+        onClick={noop}
+        onHover={noop}
+      >
+        text
+      </Annotation>
     ).toJSON()
 
     expect(tree).toMatchSnapshot()
@@ -18,33 +24,52 @@ describe('Annotation component', () => {
 
   it('calls `onClick` prop on click', () => {
     const onClick = jest.fn()
-    const C = Annotation('', noop, onClick)
     const annotation = shallow(
-      <C>text</C>
+      <Annotation
+        entityKey="key"
+        hoverEntityKey=""
+        onClick={onClick}
+        onHover={noop}
+      >
+        text
+      </Annotation>
     )
     annotation.find('span').simulate('click')
 
     expect(onClick).toHaveBeenCalled()
   })
 
-  it('calls `onHover` prop on mouseout', () => {
+  it('calls `onHover` prop on mouseenter', () => {
     const onHover = jest.fn()
-    const C = Annotation('', onHover, noop)
     const annotation = shallow(
-      <C>text</C>
+      <Annotation
+        entityKey="key"
+        hoverEntityKey=""
+        onClick={noop}
+        onHover={onHover}
+      >
+        text
+      </Annotation>
     )
-    annotation.find('span').simulate('mouseout')
+    annotation.find('span').simulate('mouseenter')
 
     expect(onHover).toHaveBeenCalled()
   })
 
-  it('calls `onHover` prop on mouseover', () => {
+  it('calls `onHover` prop on mouseleave', () => {
     const onHover = jest.fn()
     const C = Annotation('', onHover, noop)
     const annotation = shallow(
-      <C>text</C>
+      <Annotation
+        entityKey="key"
+        hoverEntityKey=""
+        onClick={noop}
+        onHover={onHover}
+      >
+        text
+      </Annotation>
     )
-    annotation.find('span').simulate('mouseover')
+    annotation.find('span').simulate('mouseleave')
 
     expect(onHover).toHaveBeenCalled()
   })

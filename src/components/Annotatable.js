@@ -20,6 +20,8 @@ import type {
   SyntheticFocusEvent
 } from 'draft-js'
 
+import type { SyntheticMouseEvent } from 'react-dom'
+
 export type Block = {
   depth: number,
   entityRanges: ?Array<{
@@ -61,6 +63,10 @@ export type Props = {
   }
 }
 
+export type State = {
+  readOnly: boolean,
+}
+
 export const createEditorState = (
   blocks: Array<Block>,
   entityMap: ?EntityMap,
@@ -79,12 +85,12 @@ export const customStyleMap = {
 }
 
 export default class Annotatable extends React.Component {
-  handleBlur: Function
-  handleChange: Function
-  handleFocus: Function
-  handleMouseDown: Function
-  handleMouseUp: Function
-  state: Object
+  handleBlur: (e: SyntheticFocusEvent) => void
+  handleChange: (e: SyntheticFocusEvent) => void
+  handleFocus: (e: SyntheticFocusEvent) => void
+  handleMouseDown: (e: SyntheticMouseEvent) => void
+  handleMouseUp: (e: SyntheticMouseEvent) => void
+  state: State
   props: Props
 
   static defaultProps = {
@@ -137,7 +143,6 @@ export default class Annotatable extends React.Component {
       <div
         onMouseDown={this.handleMouseDown}
         onMouseUp={this.handleMouseUp}
-        role="presentation"
         style={this.props.style.container}
       >
         <Editor

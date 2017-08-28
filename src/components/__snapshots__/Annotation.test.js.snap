@@ -3,13 +3,13 @@
 exports[`Annotation component renders correctly 1`] = `
 <span
   onClick={[Function]}
-  onMouseOut={[Function]}
-  onMouseOver={[Function]}
-  role="presentation"
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
   style={
     Object {
       "backgroundColor": "#71bed6",
       "cursor": "pointer",
+      "display": "inline-block",
     }
   }
 >

@@ -24,21 +24,20 @@ export default class Annotating extends React.Component {
     this.handleAnnotationClick = this.handleAnnotationClick.bind(this)
     this.handleAnnotationHover = this.handleAnnotationHover.bind(this)
     this.handleNoteEditorBlur = this.handleNoteEditorBlur.bind(this)
-    this.handleNoteEditorChange =
-      this.handleNoteEditorChange.bind(this)
-    this.handleNoteEditorFocus =
-      this.handleNoteEditorFocus.bind(this)
+    this.handleNoteEditorChange = this.handleNoteEditorChange.bind(this)
     this.saveAnnotation = this.saveAnnotation.bind(this)
 
+    const hoverEntityKey = ''
+
     this.state = {
-      hoverEntityKey: '',
+      hoverEntityKey,
       noteEditorReadOnly: true,
       noteEditorState: EditorState.createEmpty(),
       annotatableEditorState: createEditorState(
         argonautica,
         {},
         [annotationDecorator(
-          '',
+          hoverEntityKey,
           this.handleAnnotationHover,
           this.handleAnnotationClick
         )]
@@ -63,6 +62,8 @@ export default class Annotating extends React.Component {
     const selectionState = annotatableEditorState.getSelection()
 
     this.setState({
+      // RichUtils.toggleInlineStyle, somewhat confusingly,
+      // only applies to currently selected content
       annotatableEditorState: RichUtils.toggleInlineStyle(
         annotatableEditorState,
         PENDING_ANNOTATION_STYLE
@@ -114,20 +115,6 @@ export default class Annotating extends React.Component {
     this.setState({ noteEditorState })
   }
 
-  handleNoteEditorFocus() {
-    const { annotatableEditorState } = this.state
-    const selectionState = annotatableEditorState.getSelection()
-
-    if (!selectionState.isCollapsed()) {
-      this.setState({
-        annotatableEditorState: EditorState.forceSelection(
-          annotatableEditorState,
-          selectionState
-        )
-      })
-    }
-  }
-
   saveAnnotation(e) {
     e.preventDefault()
 
@@ -159,7 +146,6 @@ export default class Annotating extends React.Component {
           editorState={noteEditorState}
           onBlur={this.handleNoteEditorBlur}
           onChange={this.handleNoteEditorChange}
-          onFocus={this.handleNoteEditorFocus}
           readOnly={noteEditorReadOnly}
         />
         <div style={{ marginBottom: 10 }}>

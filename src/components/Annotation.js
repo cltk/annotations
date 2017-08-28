@@ -8,81 +8,53 @@ import {
 } from '../constants'
 
 export type Props = {
-  annotationHoverEntityKey: string,
   children: string | Object,
   entityKey: string,
-  onClick: string => void,
-  onMouseOut: string => void,
-  onMouseOver: string => void,
-  revealedEntityKey: string,
-  setCurrentTextState: Function,
+  hoverEntityKey: string,
+  onClick: (entityKey: string) => void,
+  onHover: (entityKey: ?string) => void,
 }
 
-const Annotation = (
+export const AnnotationComponent = (props: Props) => {
+  const hoverEntityKey = props.hoverEntityKey || ''
+
+  const style = {
+    backgroundColor: hoverEntityKey === props.entityKey ?
+      ANNOTATION_HOVER_BLUE :
+      ANNOTATION_BLUE,
+    cursor: 'pointer',
+    display: 'inline-block',
+  }
+
+  const handleClick = () => props.onClick(props.entityKey)
+  const handleMouseLeave = () => props.onHover('')
+  const handleMouseEnter = () => props.onHover(props.entityKey)
+
+  return (
+    <span
+      onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={style}
+    >
+      {props.children}
+    </span>
+  )
+}
+
+const AnnotationWrapper = (
   hoverEntityKey: string,
   onHover: (entityKey: ?string) => void,
-  onClick: (entityKey: string) => void
+  onClick: (entityKey: string) => void,
 ) => {
-  return class AnnotationComponent extends React.Component {
-    handleClick: Function
-    handleMouseOut: Function
-    handleMouseOver: Function
-    isHoverTarget: void => boolean
-
-    static defaultProps = {
-      annotationHoverEntityKey: '',
-      onClick: () => {},
-      onMouseOut: () => {},
-      onMouseOver: () => {},
-      revealedEntityKey: '',
-    }
-
-    constructor(props: Props) {
-      super(props)
-
-      this.handleClick = this.handleClick.bind(this)
-      this.handleMouseOut = this.handleMouseOut.bind(this)
-      this.handleMouseOver = this.handleMouseOver.bind(this)
-      this.isHoverTarget = this.isHoverTarget.bind(this)
-    }
-
-    handleClick() {
-      onClick(this.props.entityKey)
-    }
-
-    handleMouseOut() {
-      onHover('')
-    }
-
-    handleMouseOver() {
-      onHover(this.props.entityKey)
-    }
-
-    isHoverTarget() {
-      return this.props.entityKey === hoverEntityKey
-    }
-
-    render() {
-      const style = {
-        cursor: 'pointer',
-        backgroundColor: this.isHoverTarget() ?
-          ANNOTATION_HOVER_BLUE :
-          ANNOTATION_BLUE,
-      }
-
-      return (
-        <span
-          onClick={this.handleClick}
-          onMouseOut={this.handleMouseOut}
-          onMouseOver={this.handleMouseOver}
-          role="presentation"
-          style={style}
-        >
-          {this.props.children}
-        </span>
-      )
-    }
-  }
+  return (props: Props) => (
+    <AnnotationComponent
+      {...props}
+      hoverEntityKey={hoverEntityKey}
+      onClick={onClick}
+      onHover={onHover}
+    />
+  )
 }
 
-export default Annotation
+export default AnnotationWrapper
