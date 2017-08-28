@@ -18,7 +18,6 @@ export type Props = {
   setCurrentTextState: Function,
 }
 
-
 const Annotation = (
   hoverEntityKey: string,
   onHover: (entityKey: ?string) => void,

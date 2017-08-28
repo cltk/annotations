@@ -303,7 +303,7 @@ export const scansionStrategy = (
 
       return (
         entityKey !== null &&
-        contentState.getEntity(entityKey).getType() === 'SCANSION'
+        contentState.getEntity(entityKey).getType() === SCANSION_ENTITY_TYPE
       )
     },
     callback,
@@ -337,6 +337,7 @@ const style = {
 const GreekProsody = (props: Props) => {
   const entity = props.contentState.getEntity(props.entityKey)
   const { diacritic } = entity.getData()
+
   return (
     <div style={style.text}>
       {props.children}
