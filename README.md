@@ -11,8 +11,6 @@ A library for adding notes to text
 ## Requirements
 
 - Node.js >= 7.0.0 (the library may work on older versions)
-- [Yarn](https://yarnpkg.com/en/)
-
 ## Docs
 
 https://cltk.org/annotations
@@ -22,19 +20,19 @@ https://cltk.org/annotations
 Clone the repository, then install the dependencies by running
 
 ```shell
-$ yarn
+$ npm start
 ```
 
 Make sure the tests pass:
 
 ```shell
-$ yarn test
+$ npm test
 ```
 
 To develop with live previews of the library's components, run
 
 ```shell
-$ yarn storybook
+$ npm run storybook
 ```
 
 The storybook environment (which doubles as interactive documentation)
@@ -44,7 +42,7 @@ is available by default at http://localhost:6006.
 
 The MIT License (MIT)
 
-Copyright (c) 2017 CLTK
+Copyright (c) 2017-2018 CLTK
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
