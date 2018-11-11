@@ -3,7 +3,7 @@ engines:
     enabled: true
 exclude_paths:
 - "src/stubs.js"
-- "**.test.js"
+- "src/**/*.test.js"
 ratings:
    paths:
    - "src/"

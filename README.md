@@ -10,7 +10,7 @@ A library for adding notes to text
 
 ## Requirements
 
-- Node.js >= 7.0.0 (the library may work on older versions)
+- Node.js >= 8.0.0 (the library might work on older versions)
 ## Docs
 
 https://cltk.org/annotations

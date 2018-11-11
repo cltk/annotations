@@ -20,11 +20,11 @@ describe('Annotatable', () => {
 
     expect(annotatable.state().readOnly).toBe(true)
 
-    const div = annotatable.find('div')
+    const div = annotatable.find('div').first()
 
-    div.simulate('mousedown')
+    div.simulate('mouseDown')
 
-    expect(annotatable.state().readOnly).toBe(false)
+    expect(annotatable.state('readOnly')).toBe(false)
   })
 
   it('resets `state.readOnly` to `true` on mouseup', () => {
@@ -32,15 +32,13 @@ describe('Annotatable', () => {
       <Annotatable editorState={EditorState.createEmpty()} />
     )
 
-    expect(annotatable.state().readOnly).toBe(true)
-
     const div = annotatable.find('div')
 
-    div.simulate('mousedown')
+    div.simulate('mouseDown')
 
     expect(annotatable.state().readOnly).toBe(false)
 
-    div.simulate('mouseup')
+    div.simulate('mouseUp')
 
     expect(annotatable.state().readOnly).toBe(true)
   })

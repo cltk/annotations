@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react'
+import autobind from 'react-autobind'
 import {
   Editor,
   EditorState,
@@ -82,36 +83,34 @@ export default class AnnotationEditor extends React.Component {
   constructor(props: Props) {
     super(props)
 
-    this.handleChange = this.handleChange.bind(this)
-    this.handleDivClick = this.handleDivClick.bind(this)
-    this.handleFocus = this.handleFocus.bind(this)
+    autobind(this)
   }
 
-  handleChange(editorState: EditorState) {
+  onChange(editorState: EditorState) {
     this.props.onChange(editorState)
   }
 
-  handleDivClick(e: SyntheticMouseEvent) {
+  onDivClick(e: SyntheticMouseEvent) {
     e.preventDefault()
 
     this.editor && this.editor.focus()
   }
 
-  handleFocus(e: SyntheticMouseEvent) {
+  onFocus(e: SyntheticMouseEvent) {
     this.props.onFocus(e, this.editor)
   }
 
   render() {
     return (
       <div
-        onClick={this.handleDivClick}
+        onClick={this.onDivClick}
         role="present"
         style={this.props.style}
       >
         <Editor
           editorState={this.props.editorState}
-          onChange={this.handleChange}
-          onFocus={this.handleFocus}
+          onChange={this.onChange}
+          onFocus={this.onFocus}
           readOnly={this.props.readOnly}
           ref={c => { this.editor = c }}
           spellCheck

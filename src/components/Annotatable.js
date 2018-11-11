@@ -1,12 +1,14 @@
 // @flow
 
 import React from 'react'
+import autobind from 'react-autobind'
 import {
   CompositeDecorator,
   Editor,
   EditorState,
   convertFromRaw,
 } from 'draft-js'
+
 import 'draft-js/dist/Draft.css'
 
 import {
@@ -85,11 +87,11 @@ export const customStyleMap = {
 }
 
 export default class Annotatable extends React.Component {
-  handleBlur: (e: SyntheticFocusEvent) => void
-  handleChange: (e: SyntheticFocusEvent) => void
-  handleFocus: (e: SyntheticFocusEvent) => void
-  handleMouseDown: (e: SyntheticMouseEvent) => void
-  handleMouseUp: (e: SyntheticMouseEvent) => void
+  onBlur: (e: SyntheticFocusEvent) => void
+  onChange: (e: SyntheticFocusEvent) => void
+  onFocus: (e: SyntheticFocusEvent) => void
+  onMouseDown: (e: SyntheticMouseEvent) => void
+  onMouseUp: (e: SyntheticMouseEvent) => void
   state: State
   props: Props
 
@@ -105,52 +107,48 @@ export default class Annotatable extends React.Component {
   constructor(props: Props) {
     super(props)
 
-    this.handleBlur = this.handleBlur.bind(this)
-    this.handleChange = this.handleChange.bind(this)
-    this.handleFocus = this.handleFocus.bind(this)
-    this.handleMouseDown = this.handleMouseDown.bind(this)
-    this.handleMouseUp = this.handleMouseUp.bind(this)
-
     this.state = {
       readOnly: true,
     }
+
+    autobind(this)
   }
 
-  handleBlur(e: SyntheticFocusEvent) {
+  onBlur(e: SyntheticFocusEvent) {
     this.props.onBlur(e)
   }
 
-  handleChange(editorState: EditorState) {
+  onChange(editorState: EditorState) {
     this.props.onChange(editorState)
   }
 
-  handleFocus(e: SyntheticFocusEvent) {
+  onFocus(e: SyntheticFocusEvent) {
     this.props.onFocus(e)
   }
 
   // These mouse event handlers allow selections,
   // but they disallow actually modifying the text.
-  handleMouseDown() {
+  onMouseDown() {
     this.setState({ readOnly: false })
   }
 
-  handleMouseUp() {
+  onMouseUp() {
     this.setState({ readOnly: true })
   }
 
   render() {
     return (
       <div
-        onMouseDown={this.handleMouseDown}
-        onMouseUp={this.handleMouseUp}
+        onMouseDown={this.onMouseDown}
+        onMouseUp={this.onMouseUp}
         style={this.props.style.container}
       >
         <Editor
           customStyleMap={customStyleMap}
           editorState={this.props.editorState}
-          onBlur={this.handleBlur}
-          onChange={this.handleChange}
-          onFocus={this.handleFocus}
+          onBlur={this.onBlur}
+          onChange={this.onChange}
+          onFocus={this.onFocus}
           readOnly={this.state.readOnly}
           spellCheck
           style={this.props.style.editor}
