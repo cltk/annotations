@@ -1,0 +1,13 @@
+{
+    "env": {
+        "compiler": "bit.envs/compilers/react@0.0.14",
+        "tester": "bit.envs/testers/jest@0.0.34"
+    },
+    "dependencies": {},
+    "componentsDefaultDirectory": "components/{namespace}/{name}",
+    "packageManager": "npm",
+    "dist": {
+        "entry": "src",
+        "target": "lib"
+    }
+}
